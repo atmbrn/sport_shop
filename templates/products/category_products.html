@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Category - Sports Shop{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+                    <li class="breadcrumb-item active">{{ category.name }}</li>
+                </ol>
+            </nav>
+            <h1>{{ category.name }}</h1>
+            {% if category.description %}
+            <p class="text-muted">{{ category.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Categories</h5>
+                    {% for cat in categories %}
+                    <a href="{% url 'products:category' cat.slug %}" 
+                       class="btn btn-outline-primary btn-sm w-100 mb-2 {% if cat.id == category.id %}active{% endif %}">
+                        {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% if products %}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card product-card">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                            <span class="text-muted">No image</span>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
+
+                            <div class="mb-2">
+                                {% if product.discount_price %}
+                                <span class="h5 text-success">${{ product.current_price }}</span>
+                                <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                                <span class="badge bg-danger">-{{ product.discount_percentage }}%</span>
+                                {% else %}
+                                <span class="h5 text-success">${{ product.price }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-2">
+                                {% if product.is_in_stock %}
+                                <span class="badge bg-success">In Stock</span>
+                                {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{% url 'products:product_detail' product.slug %}" class="btn btn-primary btn-sm w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No products in this category yet.
+                <a href="{% url 'products:product_list' %}">Browse all products</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

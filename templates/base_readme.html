@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}README - Sports Shop{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <h1>Sports Shop - Django Project</h1>
+            <p class="lead text-muted">A complete e-commerce platform for sports equipment and apparel</p>
+
+            <h2 class="mt-5">Project Overview</h2>
+            <p>
+                Sports Shop is a full-featured e-commerce web application built with Django.
+                It allows users to browse sports products, manage shopping carts, place orders,
+                and leave reviews. The platform includes an admin interface for managing products,
+                categories, orders, and user accounts.
+            </p>
+
+            <h2 class="mt-4">Features</h2>
+            <ul>
+                <li><strong>User Authentication:</strong> Registration, login, logout with secure password handling</li>
+                <li><strong>User Profiles:</strong> Extended user profiles with address, phone, and bio</li>
+                <li><strong>Product Catalog:</strong> Browse products with filtering and search functionality</li>
+                <li><strong>Shopping Cart:</strong> Add/remove items, update quantities</li>
+                <li><strong>Orders:</strong> Complete order management with status tracking</li>
+                <li><strong>Reviews:</strong> Product reviews with ratings and moderation</li>
+                <li><strong>Django Admin:</strong> Complete admin interface with custom filters and search</li>
+                <li><strong>REST API:</strong> Full API with pagination and filtering (Django REST Framework)</li>
+                <li><strong>Logging:</strong> Comprehensive logging of user actions and events</li>
+                <li><strong>Signals:</strong> Django signals for automatic operations</li>
+                <li><strong>Environment Configuration:</strong> Secure .env configuration</li>
+            </ul>
+
+            <h2 class="mt-4">Technology Stack</h2>
+            <ul>
+                <li><strong>Backend:</strong> Django 6.0.2</li>
+                <li><strong>Database:</strong> SQLite (development), configurable for production</li>
+                <li><strong>REST API:</strong> Django REST Framework</li>
+                <li><strong>Frontend:</strong> Bootstrap 5 for responsive design</li>
+                <li><strong>Configuration:</strong> python-dotenv for environment variables</li>
+            </ul>
+
+            <h2 class="mt-4">Installation & Setup</h2>
+            
+            <h4>Prerequisites</h4>
+            <ul>
+                <li>Python 3.8+</li>
+                <li>pip (Python package manager)</li>
+                <li>Virtual environment</li>
+            </ul>
+
+            <h4>Steps</h4>
+            <ol>
+                <li>Clone the repository or extract the project files</li>
+                <li>Create and activate virtual environment:
+                    <pre><code>python -m venv .venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac</code></pre>
+                </li>
+                <li>Install dependencies:
+                    <pre><code>pip install -r requirements.txt</code></pre>
+                </li>
+                <li>Copy .env.example to .env and configure:
+                    <pre><code>cp .env.example .env</code></pre>
+                </li>
+                <li>Run migrations:
+                    <pre><code>python manage.py migrate</code></pre>
+                </li>
+                <li>Create superuser for admin:
+                    <pre><code>python manage.py createsuperuser</code></pre>
+                </li>
+                <li>Run development server:
+                    <pre><code>python manage.py runserver</code></pre>
+                </li>
+                <li>Access the application:
+                    <ul>
+                        <li>Main site: http://127.0.0.1:8000/</li>
+                        <li>Admin: http://127.0.0.1:8000/admin/</li>
+                        <li>API: http://127.0.0.1:8000/api/v1/</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h2 class="mt-4">Project Structure</h2>
+            <pre><code>sport_shop/
+├── sport_shop_project/    # Main project settings
+├── users/                  # User app (registration, profiles)
+├── products/               # Products app (catalog, categories)
+├── orders/                 # Orders app (cart, orders)
+├── reviews/                # Reviews app (product reviews)
+├── api/                    # REST API endpoints
+├── templates/              # HTML templates
+├── static/                 # Static files (CSS, JS, images)
+├── logs/                   # Application logs
+├── manage.py               # Django management script
+└── requirements.txt        # Python dependencies</code></pre>
+
+            <h2 class="mt-4">Test Credentials</h2>
+            <p>For testing, create a superuser account using the command above.</p>
+
+            <h2 class="mt-4">API Endpoints</h2>
+            <ul>
+                <li><strong>Products:</strong> GET /api/v1/products/ - List products with filters</li>
+                <li><strong>Categories:</strong> GET /api/v1/categories/ - List categories</li>
+                <li><strong>Reviews:</strong> GET/POST /api/v1/reviews/ - Product reviews</li>
+                <li><strong>Orders:</strong> GET /api/v1/orders/ - User orders (authenticated)</li>
+                <li><strong>Cart:</strong> GET/POST /api/v1/cart/ - Shopping cart operations</li>
+                <li><strong>User:</strong> GET /api/v1/users/me/ - Current user profile</li>
+            </ul>
+
+            <h2 class="mt-4">Models</h2>
+            <ul>
+                <li><strong>UserProfile:</strong> Extended user information with addresses and preferences</li>
+                <li><strong>Category:</strong> Product categories with slugs</li>
+                <li><strong>Product:</strong> Product details with pricing, stock, and images</li>
+                <li><strong>ProductImage:</strong> Additional product images</li>
+                <li><strong>Order:</strong> Customer orders with shipping and payment info</li>
+                <li><strong>OrderItem:</strong> Items within an order</li>
+                <li><strong>Cart:</strong> Shopping cart per user</li>
+                <li><strong>CartItem:</strong> Items in shopping cart</li>
+                <li><strong>Review:</strong> Product reviews with ratings</li>
+            </ul>
+
+            <h2 class="mt-4">Features in Detail</h2>
+            
+            <h4>Authentication & Authorization</h4>
+            <ul>
+                <li>User registration with email validation</li>
+                <li>Secure login/logout</li>
+                <li>LoginRequiredMixin for protected views</li>
+                <li>Custom user permissions</li>
+            </ul>
+
+            <h4>Product Management</h4>
+            <ul>
+                <li>Product filtering by category, price, and attributes</li>
+                <li>Search functionality</li>
+                <li>Product details with images and specifications</li>
+                <li>View count tracking</li>
+                <li>Featured products</li>
+            </ul>
+
+            <h4>Order Management</h4>
+            <ul>
+                <li>Shopping cart functionality</li>
+                <li>Order placement with shipping details</li>
+                <li>Order status tracking</li>
+                <li>Order history for users</li>
+                <li>Payment method selection</li>
+            </ul>
+
+            <h4>Admin Features</h4>
+            <ul>
+                <li>ModelAdmin customization with list_display, search_fields, list_filter</li>
+                <li>Inline editing for related models</li>
+                <li>Order status badges with color coding</li>
+                <li>Bulk actions for reviews (approve/disapprove)</li>
+                <li>Custom admin filters</li>
+            </ul>
+
+            <h2 class="mt-4">Django Signals</h2>
+            <ul>
+                <li><strong>post_save User:</strong> Automatically creates UserProfile</li>
+                <li><strong>post_save Order:</strong> Generates unique order number</li>
+                <li><strong>post_save OrderItem:</strong> Logs order item creation</li>
+                <li><strong>pre_delete Order:</strong> Logs order deletion</li>
+            </ul>
+
+            <h2 class="mt-4">Logging</h2>
+            <p>The application logs important events to:</p>
+            <ul>
+                <li>Console output during development</li>
+                <li>logs/sport_shop.log - General application logs</li>
+                <li>logs/errors.log - Error-level logs</li>
+            </ul>
+
+            <h2 class="mt-4">Security Features</h2>
+            <ul>
+                <li>CSRF protection on all forms</li>
+                <li>Password hashing and validation</li>
+                <li>Email uniqueness validation</li>
+                <li>User-specific data access (users can only see own orders)</li>
+                <li>Secure .env configuration for sensitive data</li>
+            </ul>
+
+            <h2 class="mt-4">Code Quality</h2>
+            <ul>
+                <li>Follows PEP 8 style guidelines</li>
+                <li>Proper code comments and docstrings</li>
+                <li>Organized imports (standard, third-party, local)</li>
+                <li>Logical model relationships and constraints</li>
+                <li>Custom form validation with clean() methods</li>
+            </ul>
+
+            <h2 class="mt-4">Possible Enhancements</h2>
+            <ul>
+                <li>Payment gateway integration (Stripe, PayPal)</li>
+                <li>Email notifications for orders</li>
+                <li>Advanced search with Elasticsearch</li>
+                <li>Product recommendations</li>
+                <li>Wishlist feature</li>
+                <li>Promotional codes and discounts</li>
+                <li>Inventory management alerts</li>
+                <li>Analytics dashboard</li>
+            </ul>
+
+            <h2 class="mt-4">Support & Documentation</h2>
+            <ul>
+                <li>Django Documentation: https://docs.djangoproject.com/</li>
+                <li>Django REST Framework: https://www.django-rest-framework.org/</li>
+                <li>Bootstrap 5: https://getbootstrap.com/docs/5.0/</li>
+            </ul>
+
+            <h2 class="mt-4">License</h2>
+            <p>This project is provided as-is for educational purposes.</p>
+
+            <hr>
+            <p class="text-muted text-center mt-5">Built with Django ❤️</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
