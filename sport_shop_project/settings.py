@@ -94,11 +94,11 @@ WSGI_APPLICATION = 'sport_shop_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'defaultdb',
-        'USER': 'avnadmin',
-        'PASSWORD': 'AVNS_y1GS8Mky1XLrznIJqUD',
-        'HOST': 'mysql-29850f28-atmbrn.b.aivencloud.com',
-        'PORT': '23242',
+        'NAME': os.getenv('DB_NAME', 'defaultdb'),
+        'USER': os.getenv('DB_USER', 'avnadmin'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'avndbpassword'),
+        'HOST': os.getenv('DB_HOST', 'mysql-29850f28-atmbrn.b.aivencloud.com'),
+        'PORT': os.getenv('DB_PORT', '23242'),
     }
 }
 
