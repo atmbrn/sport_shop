@@ -89,12 +89,43 @@ WSGI_APPLICATION = 'sport_shop_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# Support both SQLite and PostgreSQL via DATABASE_URL
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'defaultdb',
+        'USER': 'avnadmin',
+        'PASSWORD': 'AVNS_y1GS8Mky1XLrznIJqUD',
+        'HOST': 'mysql-29850f28-atmbrn.b.aivencloud.com',
+        'PORT': '23242',
     }
 }
+
+
+#if DATABASE_URL.startswith('postgres://') or DATABASE_URL.startswith('postgresql://'):
+#     # Parse PostgreSQL URL
+#     # Format: postgresql://user:password@host:port/dbname
+#     import urllib.parse
+#     db_config = urllib.parse.urlparse(DATABASE_URL)
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': db_config.path[1:],  # Remove leading slash
+#             'USER': db_config.username,
+#             'PASSWORD': db_config.password,
+#             'HOST': db_config.hostname,
+#             'PORT': db_config.port or 5432,
+#         }
+#     }
+# #else:
+#     # Default to SQLite
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         # }
+#     # }
 
 
 # Password validation

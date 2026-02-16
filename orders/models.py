@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
 from django.core.validators import MinValueValidator
-from django.db.models import Sum, F
+from django.db.models import Sum, F, DecimalField
+from django.db.models.functions import Coalesce
+from django.db.models import ExpressionWrapper
 import logging
 
 logger = logging.getLogger(__name__)
@@ -160,8 +162,10 @@ class Cart(models.Model):
         return f"Cart of {self.user.username}"
 
     def get_total_price(self):
+        unit_price_expr = Coalesce(F('product__discount_price'), F('product__price'))
+        total_expr = ExpressionWrapper(F('quantity') * unit_price_expr, output_field=DecimalField())
         return self.items.aggregate(
-            total=Sum(F('product__current_price') * F('quantity'), output_field=models.DecimalField())
+            total=Sum(total_expr)
         )['total'] or 0
 
     def get_total_items(self):
@@ -198,4 +202,5 @@ class CartItem(models.Model):
 
     @property
     def subtotal(self):
-        return self.product.current_price * self.quantity
+        price = self.product.discount_price if self.product.discount_price is not None else self.product.price
+        return price * self.quantity
