@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-neldt@h67x$=xldirh#yv0p2=83fajid7rtsxefvm8xz1avr9t')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
@@ -94,10 +94,10 @@ WSGI_APPLICATION = 'sport_shop_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'defaultdb'),
-        'USER': os.getenv('DB_USER', 'avnadmin'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'avndbpassword'),
-        'HOST': os.getenv('DB_HOST', 'mysql-29850f28-atmbrn.b.aivencloud.com'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT', '23242'),
     }
 }
