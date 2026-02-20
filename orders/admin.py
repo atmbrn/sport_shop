@@ -79,11 +79,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     def payment_status(self, obj):
         if obj.is_paid:
-            return format_html(
-                '<span style="color: green;">✓ Paid</span>'
-            )
+            return format_html('<span style="color: green;">{}</span>', '✓ Paid')
         return format_html(
-            '<span style="color: red;">✗ Unpaid</span>'
+            '<span style="color: red;">{}</span>', '✗ Unpaid'
         )
     payment_status.short_description = 'Payment Status'
 

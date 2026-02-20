@@ -6,11 +6,17 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-5">
+            {% with first_image=product.images.first %}
             {% if product.image %}
             <div class="mb-3">
-                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover;">
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover; width:100%;">
+            </div>
+            {% elif first_image %}
+            <div class="mb-3">
+                <img src="{{ first_image.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover; width:100%;">
             </div>
             {% endif %}
+            {% endwith %}
             {% if images %}
             <div class="row">
                 {% for image in images %}

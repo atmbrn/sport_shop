@@ -82,13 +82,17 @@
                 {% for product in products %}
                 <div class="col-md-4 mb-4">
                     <div class="card product-card">
+                        {% with first_image=product.images.first %}
                         {% if product.image %}
-                        <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" class="card-img-top product-image img-fluid" alt="{{ product.name }}" style="height:260px; object-fit:cover;">
+                        {% elif first_image %}
+                        <img src="{{ first_image.image.url }}" class="card-img-top product-image img-fluid" alt="{{ product.name }}" style="height:260px; object-fit:cover;">
                         {% else %}
-                        <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                        <div class="product-image bg-light d-flex align-items-center justify-content-center" style="height:260px;">
                             <span class="text-muted">No image</span>
                         </div>
                         {% endif %}
+                        {% endwith %}
                         <div class="card-body">
                             <h5 class="card-title">
                                 <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">

@@ -1,59 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sports Shop{% endblock %}</title>
     <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        nav {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        footer {
-            background-color: #f8f9fa;
-            margin-top: 50px;
-            padding: 30px 0;
-            border-top: 1px solid #dee2e6;
-        }
-        .product-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-            height: 100%;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .product-image {
-            height: 250px;
-            object-fit: cover;
-        }
-        .alert-message {
-            margin-top: 20px;
-        }
-        .cart-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #dc3545;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/">🏆 Sports Shop</a>
+            <a class="navbar-brand fw-bold" href="/">Sports Shop</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -83,7 +41,14 @@
                             <li><a class="dropdown-item" href="{% url 'users:edit' %}">Edit Info</a></li>
                             <li><a class="dropdown-item" href="{% url 'users:profile_edit' %}">Edit Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
+                            <li>
+                                <form method="post" action="{% url 'users:logout' %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%; padding: 0.5rem 1rem;">
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                     {% if user.is_staff %}
