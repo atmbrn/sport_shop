@@ -26,6 +26,12 @@
                         {% if categories %}
                         <div class="mb-3">
                             <h6 class="text-white">Categories</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="category"
+                                       id="cat_all" value=""
+                                       {% if not request.GET.category %}checked{% endif %}>
+                                <label class="form-check-label" for="cat_all">All</label>
+                            </div>
                             {% for category in categories %}
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="category" 
@@ -36,9 +42,6 @@
                                 </label>
                             </div>
                             {% endfor %}
-                            {% if request.GET.category %}
-                            <button type="submit" name="category" value="" class="btn btn-sm btn-link">Clear</button>
-                            {% endif %}
                         </div>
                         {% endif %}
 
@@ -99,7 +102,7 @@
                                     {{ product.name }}
                                 </a>
                             </h5>
-                            <p class="text-white small">{{ product.category.name }}</p>
+                            <p class="text-white small">{% for cat in product.categories.all %}{{ cat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 
                             <div class="mb-2">
                                 {% if product.discount_price %}
@@ -165,4 +168,20 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[name="category"]').forEach(function(radio) {
+        var wasChecked = false;
+        radio.addEventListener('mousedown', function() { wasChecked = radio.checked; });
+        radio.addEventListener('click', function(e) {
+            if (wasChecked) {
+                e.preventDefault();
+                radio.checked = false;
+                var frm = radio.closest('form');
+                if (frm) frm.submit();
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

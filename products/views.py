@@ -27,7 +27,7 @@ class ProductListView(ListView):
 
         category = self.request.GET.get('category')
         if category:
-            queryset = queryset.filter(category__slug=category)
+            queryset = queryset.filter(categories__slug=category)
 
         sort = self.request.GET.get('sort', '-created_at')
         if sort in ['price', '-price', 'name', '-name', 'views_count', '-views_count']:
@@ -60,23 +60,52 @@ class ProductDetailView(DetailView):
 
         context['images'] = product.images.all()
 
-        reviews = Review.objects.filter(product=product, is_approved=True)
-        context['reviews'] = reviews
-        context['avg_rating'] = reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+        reviews_qs = Review.objects.filter(product=product, is_approved=True)
+
+        avg_rating = reviews_qs.aggregate(avg=Avg('rating'))['avg'] or 0
+
+        reviews_list = list(reviews_qs)
+
+        if self.request.user.is_authenticated:
+            from reviews.models import ReviewVote
+            votes_qs = ReviewVote.objects.filter(review__in=reviews_qs, user=self.request.user).values_list('review_id', 'vote')
+            vote_map = {rid: v for rid, v in votes_qs}
+            for r in reviews_list:
+                r.user_vote = vote_map.get(r.id, 0)
+        else:
+            for r in reviews_list:
+                r.user_vote = 0
+
+        context['reviews'] = reviews_list
+        context['avg_rating'] = avg_rating
         context['review_form'] = None
 
         if self.request.user.is_authenticated:
             from reviews.forms import ReviewForm
-            user_review = reviews.filter(user=self.request.user).first()
+            user_review = reviews_qs.filter(user=self.request.user).first()
             if not user_review:
                 context['review_form'] = ReviewForm()
 
         context['related_products'] = Product.objects.filter(
-            category=product.category,
+            categories__in=product.categories.all(),
             is_active=True
-        ).exclude(id=product.id)[:5]
+        ).exclude(id=product.id).distinct()[:5]
 
         logger.info(f"Product viewed: {product.name} by {self.request.user or 'Anonymous'}")
+
+        first_category = product.categories.first()
+        if first_category:
+            variants_qs = Product.objects.filter(
+                name=product.name,
+                categories=first_category,
+                is_active=True
+            ).order_by('size')
+        else:
+            variants_qs = Product.objects.filter(
+                name=product.name,
+                is_active=True
+            ).order_by('size')
+        context['variants'] = variants_qs
 
         return context
 
@@ -91,3 +120,16 @@ def category_products(request, slug):
         'categories': Category.objects.filter(is_active=True)
     }
     return render(request, 'products/category_products.html', context)
+
+
+def home(request):
+    categories = Category.objects.filter(is_active=True)
+    featured_products = Product.objects.filter(is_active=True, is_featured=True)[:6]
+    latest_products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]
+
+    context = {
+        'categories': categories,
+        'featured_products': featured_products,
+        'latest_products': latest_products,
+    }
+    return render(request, 'home.html', context)

@@ -5,6 +5,8 @@ from products.models import Product
 from .models import Review
 from .forms import ReviewForm
 import logging
+from django.db import transaction
+from .models import ReviewVote
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +92,50 @@ def mark_helpful(request, review_id):
     review = get_object_or_404(Review, id=review_id)
 
     if request.method == 'POST':
-        review.helpful_count += 1
-        review.save()
-        logger.info(f"Review marked as helpful: {review.id}")
+        with transaction.atomic():
+            existing = ReviewVote.objects.filter(review=review, user=request.user).first()
+            if existing:
+                if existing.vote == ReviewVote.VOTE_HELPFUL:
+                    existing.delete()
+                    review.helpful_count = max(0, review.helpful_count - 1)
+                    review.save()
+                else:
+                    existing.vote = ReviewVote.VOTE_HELPFUL
+                    existing.save()
+                    review.helpful_count += 1
+                    review.unhelpful_count = max(0, review.unhelpful_count - 1)
+                    review.save()
+            else:
+                ReviewVote.objects.create(review=review, user=request.user, vote=ReviewVote.VOTE_HELPFUL)
+                review.helpful_count += 1
+                review.save()
+            logger.info(f"Review marked as helpful: {review.id} by {request.user.username}")
+
+    return redirect('products:product_detail', slug=review.product.slug)
+
+
+@login_required(login_url='users:login')
+def mark_unhelpful(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+
+    if request.method == 'POST':
+        with transaction.atomic():
+            existing = ReviewVote.objects.filter(review=review, user=request.user).first()
+            if existing:
+                if existing.vote == ReviewVote.VOTE_UNHELPFUL:
+                    existing.delete()
+                    review.unhelpful_count = max(0, review.unhelpful_count - 1)
+                    review.save()
+                else:
+                    existing.vote = ReviewVote.VOTE_UNHELPFUL
+                    existing.save()
+                    review.unhelpful_count += 1
+                    review.helpful_count = max(0, review.helpful_count - 1)
+                    review.save()
+            else:
+                ReviewVote.objects.create(review=review, user=request.user, vote=ReviewVote.VOTE_UNHELPFUL)
+                review.unhelpful_count += 1
+                review.save()
+            logger.info(f"Review marked as unhelpful: {review.id} by {request.user.username}")
 
     return redirect('products:product_detail', slug=review.product.slug)
