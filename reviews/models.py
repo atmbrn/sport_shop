@@ -69,3 +69,25 @@ class Review(models.Model):
         if total > 0:
             return int((self.helpful_count / total) * 100)
         return 0
+
+
+class ReviewVote(models.Model):
+    VOTE_HELPFUL = 1
+    VOTE_UNHELPFUL = -1
+
+    VOTE_CHOICES = (
+        (VOTE_HELPFUL, 'Helpful'),
+        (VOTE_UNHELPFUL, 'Unhelpful'),
+    )
+
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='votes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='review_votes')
+    vote = models.SmallIntegerField(choices=VOTE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'review_vote'
+        unique_together = ('review', 'user')
+
+    def __str__(self):
+        return f"Vote {self.vote} by {self.user.username} on review {self.review.id}"
