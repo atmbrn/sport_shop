@@ -12,9 +12,9 @@
                     <li class="breadcrumb-item active">{{ category.name }}</li>
                 </ol>
             </nav>
-            <h1>{{ category.name }}</h1>
+            <h1 class="text-white">{{ category.name }}</h1>
             {% if category.description %}
-            <p class="text-muted">{{ category.description }}</p>
+            <p class="text-white">{{ category.description }}</p>
             {% endif %}
         </div>
     </div>
@@ -22,8 +22,8 @@
     <div class="row">
         <div class="col-md-3">
             <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Categories</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Categories</h5>
                     {% for cat in categories %}
                     <a href="{% url 'products:category' cat.slug %}" 
                        class="btn btn-outline-primary btn-sm w-100 mb-2 {% if cat.id == category.id %}active{% endif %}">
@@ -44,12 +44,12 @@
                         <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
                         {% else %}
                         <div class="product-image bg-light d-flex align-items-center justify-content-center">
-                            <span class="text-muted">No image</span>
+                            <span class="text-white">No image</span>
                         </div>
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                                <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none text-white">
                                     {{ product.name }}
                                 </a>
                             </h5>
@@ -57,7 +57,7 @@
                             <div class="mb-2">
                                 {% if product.discount_price %}
                                 <span class="h5 text-success">${{ product.current_price }}</span>
-                                <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                                <span class="text-white text-decoration-line-through">${{ product.price }}</span>
                                 <span class="badge bg-danger">-{{ product.discount_percentage }}%</span>
                                 {% else %}
                                 <span class="h5 text-success">${{ product.price }}</span>

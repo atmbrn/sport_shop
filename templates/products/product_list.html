@@ -6,16 +6,16 @@
 <div class="container mt-5">
     <div class="row mb-4">
         <div class="col-md-12">
-            <h1>Products</h1>
-            <p class="text-muted">Browse our collection of sports equipment and apparel</p>
+            <h1 class="text-white">Product</h1>
+            <p class="text-white">Browse our collection of sports equipment and apparel</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-3">
             <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Search & Filter</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Search & Filter</h5>
                     <form method="get" class="mb-3">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" name="search" 
@@ -25,7 +25,7 @@
 
                         {% if categories %}
                         <div class="mb-3">
-                            <h6>Categories</h6>
+                            <h6 class="text-white">Categories</h6>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="category"
                                        id="cat_all" value=""
@@ -46,7 +46,7 @@
                         {% endif %}
 
                         <div class="mb-3">
-                            <h6>Sort By</h6>
+                            <h6 class="text-white">Sort By</h6>
                             <select class="form-select form-select-sm" name="sort">
                                 <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Newest</option>
                                 <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Price: Low to High</option>
@@ -62,8 +62,8 @@
 
             {% if featured_products %}
             <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Featured Products</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Featured Products</h5>
                     {% for product in featured_products %}
                     <div class="mb-3">
                         {% if product.image %}
@@ -92,22 +92,22 @@
                         <img src="{{ first_image.image.url }}" class="card-img-top product-image img-fluid" alt="{{ product.name }}" style="height:260px; object-fit:cover;">
                         {% else %}
                         <div class="product-image bg-light d-flex align-items-center justify-content-center" style="height:260px;">
-                            <span class="text-muted">No image</span>
+                            <span class="text-white">No image</span>
                         </div>
                         {% endif %}
                         {% endwith %}
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                                <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none text-white">
                                     {{ product.name }}
                                 </a>
                             </h5>
-                            <p class="text-muted small">{% for cat in product.categories.all %}{{ cat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                            <p class="text-white small">{% for cat in product.categories.all %}{{ cat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 
                             <div class="mb-2">
                                 {% if product.discount_price %}
                                 <span class="h5 text-success">${{ product.current_price }}</span>
-                                <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                                <span class="text-white text-decoration-line-through">${{ product.price }}</span>
                                 <span class="badge bg-danger">-{{ product.discount_percentage }}%</span>
                                 {% else %}
                                 <span class="h5 text-success">${{ product.price }}</span>
