@@ -29,7 +29,7 @@
         </div>
 
         <div class="col-md-7">
-            <h1>{{ product.name }}</h1>
+            <h1 class="text-white">{{ product.name }}</h1>
 
             <div class="mb-3">
                 <span class="badge bg-secondary">{{ product.category.name }}</span>
@@ -45,7 +45,7 @@
                         {% if i|add:"0" <= avg_rating %}★{% else %}☆{% endif %}
                     {% endfor %}
                 </span>
-                <span class="text-muted">({{ avg_rating|floatformat:1 }}/5.0)</span>
+                <span class="text-white">({{ avg_rating|floatformat:1 }}/5.0)</span>
                 {% endif %}
             </div>
 
@@ -54,7 +54,7 @@
                     {% if product.discount_price %}
                     <div class="mb-2">
                         <span class="h4 text-success">${{ product.current_price }}</span>
-                        <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                        <span class="text-white text-decoration-line-through">${{ product.price }}</span>
                         <span class="badge bg-danger">-{{ product.discount_percentage }}% OFF</span>
                     </div>
                     {% else %}
@@ -75,8 +75,8 @@
 
             {% if product.size or product.color or product.material %}
             <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Specifications</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Specifications</h5>
                     {% if product.size %}
                     <p><strong>Size:</strong> {{ product.get_size_display }}</p>
                     {% endif %}
@@ -108,8 +108,8 @@
             {% endif %}
 
             <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Description</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Description</h5>
                     <p>{{ product.description }}</p>
                 </div>
             </div>
@@ -118,7 +118,7 @@
 
     <div class="row mt-5">
         <div class="col-md-12">
-            <h2 class="mb-4">Reviews</h2>
+            <h2 class="mb-4 text-white">Reviews</h2>
 
             {% if user.is_authenticated and review_form %}
             <div class="card mb-4">
@@ -173,7 +173,7 @@
                                             {% if i|add:"0" <= review.rating %}★{% else %}☆{% endif %}
                                         {% endfor %}
                                     </span>
-                                    <p class="text-muted small">
+                                    <p class="text-white small">
                                         By {{ review.user.username }} on {{ review.created_at|date:"M d, Y" }}
                                         {% if review.is_verified_purchase %}
                                         <span class="badge bg-success">Verified Purchase</span>
@@ -183,7 +183,7 @@
                             </div>
                             <p class="card-text">{{ review.content }}</p>
                             <div class="mt-2">
-                                <small class="text-muted">
+                                <small class="text-white">
                                     👍 {{ review.helpful_count }} helpful
                                     {% if review.unhelpful_count %}• 👎 {{ review.unhelpful_count }}{% endif %}
                                 </small>
@@ -204,7 +204,7 @@
     {% if related_products %}
     <div class="row mt-5">
         <div class="col-md-12 mb-4">
-            <h2>Related Products</h2>
+            <h2 class="text-white">Related Products</h2>
         </div>
         {% for rel_product in related_products %}
         <div class="col-md-4 mb-4">

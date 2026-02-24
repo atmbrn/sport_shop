@@ -1,5 +1,8 @@
 Django==6.0.2
 djangorestframework==3.14.0
-django-filter==23.2
+# django-filter 23.2 depended on django.utils.itercompat, which was removed in
+# Django 6. It causes the ModuleNotFoundError seen at runtime. Upgrade to a
+# newer django-filter release that is compatible with Django 6.
+django-filter>=24.0
 Pillow==10.0.0
 python-dotenv==1.0.0
