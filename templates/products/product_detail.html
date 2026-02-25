@@ -8,12 +8,18 @@
         <div class="col-md-5">
             {% with first_image=product.images.first %}
             {% if product.image %}
-            <div class="mb-3">
-                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover; width:100%;">
+            <div class="mb-3 position-relative">
+                <img id="main-product-image" src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover; width:100%;">
+                <div class="image-progress position-absolute start-0 end-0 bottom-0" style="height:4px; background: rgba(255,255,255,0.35);">
+                    <div class="image-progress-fill" style="width:0%; height:100%; background: rgba(13,110,253,0.9); transition: width 0.1s linear;"></div>
+                </div>
             </div>
             {% elif first_image %}
-            <div class="mb-3">
-                <img src="{{ first_image.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover; width:100%;">
+            <div class="mb-3 position-relative">
+                <img id="main-product-image" src="{{ first_image.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover; width:100%;">
+                <div class="image-progress position-absolute start-0 end-0 bottom-0" style="height:4px; background: rgba(255,255,255,0.35);">
+                    <div class="image-progress-fill" style="width:0%; height:100%; background: rgba(13,110,253,0.9); transition: width 0.1s linear;"></div>
+                </div>
             </div>
             {% endif %}
             {% endwith %}
@@ -21,7 +27,7 @@
             <div class="row">
                 {% for image in images %}
                 <div class="col-3 mb-2">
-                    <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ image.alt_text }}" style="cursor: pointer; height: 100px; object-fit: cover;">
+                    <img src="{{ image.image.url }}" class="img-fluid rounded product-thumb" data-src="{{ image.image.url }}" data-alt="{{ image.alt_text }}" data-index="{{ forloop.counter0 }}" alt="{{ image.alt_text }}" style="cursor: pointer; height: 100px; object-fit: cover;">
                 </div>
                 {% endfor %}
             </div>
@@ -29,10 +35,12 @@
         </div>
 
         <div class="col-md-7">
-            <h1>{{ product.name }}</h1>
+            <h1 class="text-white">{{ product.name }}</h1>
 
             <div class="mb-3">
-                <span class="badge bg-secondary">{{ product.category.name }}</span>
+                {% for cat in product.categories.all %}
+                <span class="badge bg-secondary">{{ cat.name }}</span>
+                {% endfor %}
                 {% if product.brand %}
                 <span class="badge bg-info">{{ product.brand }}</span>
                 {% endif %}
@@ -45,7 +53,7 @@
                         {% if i|add:"0" <= avg_rating %}★{% else %}☆{% endif %}
                     {% endfor %}
                 </span>
-                <span class="text-muted">({{ avg_rating|floatformat:1 }}/5.0)</span>
+                <span class="text-white">({{ avg_rating|floatformat:1 }}/5.0)</span>
                 {% endif %}
             </div>
 
@@ -54,7 +62,7 @@
                     {% if product.discount_price %}
                     <div class="mb-2">
                         <span class="h4 text-success">${{ product.current_price }}</span>
-                        <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                        <span class="text-white text-decoration-line-through">${{ product.price }}</span>
                         <span class="badge bg-danger">-{{ product.discount_percentage }}% OFF</span>
                     </div>
                     {% else %}
@@ -75,10 +83,22 @@
 
             {% if product.size or product.color or product.material %}
             <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Specifications</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Specifications</h5>
+                    {% if variants and variants.count > 1 %}
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Size:</strong></label>
+                        <select id="size-selector" class="form-select w-auto d-inline-block ms-2">
+                            <option value="">Select size</option>
+                            {% for v in variants %}
+                                <option data-url="{% url 'products:product_detail' v.slug %}" value="{{ v.slug }}" {% if v.id == product.id %}selected{% endif %}>{{ v.get_size_display|default:'One size' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% else %}
                     {% if product.size %}
                     <p><strong>Size:</strong> {{ product.get_size_display }}</p>
+                    {% endif %}
                     {% endif %}
                     {% if product.color %}
                     <p><strong>Color:</strong> {{ product.color }}</p>
@@ -91,13 +111,14 @@
             {% endif %}
 
             {% if user.is_authenticated and product.is_in_stock %}
-            <form method="post" action="{% url 'orders:add_to_cart' product.id %}" class="mb-4">
+            <form method="post" action="{% url 'orders:add_to_cart' product.id %}" class="mb-4" id="add-to-cart-form">
                 {% csrf_token %}
+                <input type="hidden" name="variant_slug" id="variant_slug_input" value="{{ product.slug }}">
                 <div class="input-group mb-3">
                     <label class="input-group-text">Quantity:</label>
                     <input type="number" class="form-control" name="quantity" value="1" min="1" max="{{ product.stock }}">
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100">
+                <button type="submit" class="btn btn-primary btn-lg w-100" id="add-to-cart-button">
                     <i class="bi bi-cart-plus"></i> Add to Cart
                 </button>
             </form>
@@ -108,8 +129,8 @@
             {% endif %}
 
             <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Description</h5>
+                <div class="card-body text-white">
+                    <h5 class="card-title text-white">Description</h5>
                     <p>{{ product.description }}</p>
                 </div>
             </div>
@@ -118,7 +139,7 @@
 
     <div class="row mt-5">
         <div class="col-md-12">
-            <h2 class="mb-4">Reviews</h2>
+            <h2 class="mb-4 text-white">Reviews</h2>
 
             {% if user.is_authenticated and review_form %}
             <div class="card mb-4">
@@ -173,7 +194,7 @@
                                             {% if i|add:"0" <= review.rating %}★{% else %}☆{% endif %}
                                         {% endfor %}
                                     </span>
-                                    <p class="text-muted small">
+                                    <p class="text-white small">
                                         By {{ review.user.username }} on {{ review.created_at|date:"M d, Y" }}
                                         {% if review.is_verified_purchase %}
                                         <span class="badge bg-success">Verified Purchase</span>
@@ -183,9 +204,23 @@
                             </div>
                             <p class="card-text">{{ review.content }}</p>
                             <div class="mt-2">
-                                <small class="text-muted">
+                                <small class="text-white">
+                                    {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'reviews:mark_helpful' review.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn p-0 border-0 me-2 {% if review.user_vote == 1 %}text-primary fw-bold{% else %}btn-link{% endif %}">👍</button>
+                                    </form>
+                                    <span class="me-3">{{ review.helpful_count }} helpful</span>
+
+                                    <form method="post" action="{% url 'reviews:mark_unhelpful' review.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn p-0 border-0 ms-2 {% if review.user_vote == -1 %}text-danger fw-bold{% else %}btn-link{% endif %}">👎</button>
+                                    </form>
+                                    <span class="ms-2">{{ review.unhelpful_count }}</span>
+                                    {% else %}
                                     👍 {{ review.helpful_count }} helpful
                                     {% if review.unhelpful_count %}• 👎 {{ review.unhelpful_count }}{% endif %}
+                                    {% endif %}
                                 </small>
                             </div>
                         </div>
@@ -204,7 +239,7 @@
     {% if related_products %}
     <div class="row mt-5">
         <div class="col-md-12 mb-4">
-            <h2>Related Products</h2>
+            <h2 class="text-white">Related Products</h2>
         </div>
         {% for rel_product in related_products %}
         <div class="col-md-4 mb-4">
@@ -229,4 +264,98 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var selector = document.getElementById('size-selector');
+    var variantInput = document.getElementById('variant_slug_input');
+    var addButton = document.getElementById('add-to-cart-button');
+
+    function setButtonState(){
+        if (selector){
+            if (selector.value){
+                variantInput.value = selector.value;
+                addButton.removeAttribute('disabled');
+            } else {
+                addButton.setAttribute('disabled', 'disabled');
+            }
+        } else {
+            if (addButton) addButton.removeAttribute('disabled');
+        }
+    }
+
+    if (selector){
+        setButtonState();
+        selector.addEventListener('change', function(e){
+            setButtonState();
+        });
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var mainImg = document.getElementById('main-product-image');
+    var thumbs = Array.from(document.querySelectorAll('.product-thumb'));
+    if (!mainImg) return;
+
+    var images = thumbs.map(function(t){ return { src: t.dataset.src, alt: t.dataset.alt }; });
+    if (images.length === 0){
+        images = [{ src: mainImg.src, alt: mainImg.alt }];
+    }
+
+    var currentIndex = images.findIndex(function(i){ return i.src === mainImg.src; });
+    if (currentIndex === -1) currentIndex = 0;
+
+    function highlightThumb(idx){
+        thumbs.forEach(function(t){ t.classList.remove('border','border-3','border-primary'); });
+        if (thumbs[idx]) thumbs[idx].classList.add('border','border-3','border-primary');
+    }
+
+    function showIndex(i){
+        currentIndex = (i + images.length) % images.length;
+        var img = images[currentIndex];
+        mainImg.src = img.src;
+        mainImg.alt = img.alt || mainImg.alt;
+        highlightThumb(currentIndex);
+    }
+
+    thumbs.forEach(function(t, idx){
+        t.addEventListener('click', function(){
+            showIndex(idx);
+            resetTimer();
+        });
+    });
+
+    var intervalMs = 10000;
+    var progressFill = document.querySelector('.image-progress-fill');
+    var rafId = null;
+    var startTime = null;
+
+    function tick(){
+        if (!startTime) startTime = Date.now();
+        var elapsed = Date.now() - startTime;
+        var pct = Math.min(100, (elapsed / intervalMs) * 100);
+        if (progressFill) progressFill.style.width = pct + '%';
+        if (pct >= 100){
+            showIndex(currentIndex + 1);
+            startTime = Date.now();
+            if (progressFill) progressFill.style.width = '0%';
+        }
+        rafId = window.requestAnimationFrame(tick);
+    }
+
+    function resetTimer(){
+        startTime = Date.now();
+        if (progressFill) progressFill.style.width = '0%';
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(tick);
+    }
+
+    resetTimer();
+
+    highlightThumb(currentIndex);
+});
+</script>
 {% endblock %}

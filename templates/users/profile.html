@@ -12,11 +12,11 @@
                     <img src="{{ profile.profile_image.url }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                     {% else %}
                     <div class="bg-light rounded-circle mx-auto mb-3" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">
-                        <span class="text-muted">No image</span>
+                        <span class="text-white">No image</span>
                     </div>
                     {% endif %}
                     <h4>{{ user.get_full_name|default:user.username }}</h4>
-                    <p class="text-muted">{{ user.email }}</p>
+                    <p class="text-white">{{ user.email }}</p>
                     <a href="{% url 'users:edit' %}" class="btn btn-sm btn-primary">Edit Info</a>
                     <a href="{% url 'users:profile_edit' %}" class="btn btn-sm btn-secondary">Edit Profile</a>
                 </div>
@@ -107,7 +107,7 @@
                     </div>
                     <a href="{% url 'orders:order_list' %}" class="btn btn-primary">View All Orders</a>
                     {% else %}
-                    <p class="text-muted">You haven't placed any orders yet.</p>
+                    <p class="text-white">You haven't placed any orders yet.</p>
                     <a href="{% url 'products:product_list' %}" class="btn btn-primary">Start Shopping</a>
                     {% endif %}
                 </div>

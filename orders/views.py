@@ -27,7 +27,11 @@ def cart_view(request):
 
 @login_required(login_url='users:login')
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id, is_active=True)
+    variant_slug = request.POST.get('variant_slug') or None
+    if variant_slug:
+        product = get_object_or_404(Product, slug=variant_slug, is_active=True)
+    else:
+        product = get_object_or_404(Product, id=product_id, is_active=True)
     cart, created = Cart.objects.get_or_create(user=request.user)
 
     quantity = int(request.POST.get('quantity', 1))
