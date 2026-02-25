@@ -96,10 +96,12 @@ def checkout(request):
         return redirect('orders:cart')
 
     if request.method == 'POST':
+        payment_method = request.POST.get('payment_method', 'card')
+
         order = Order.objects.create(
             user=request.user,
             status='pending',
-            payment_method=request.POST.get('payment_method', 'card'),
+            payment_method=payment_method,
             total_amount=cart.get_total_price(),
             final_amount=cart.get_total_price(),
             shipping_address=request.POST.get('shipping_address'),
@@ -108,6 +110,16 @@ def checkout(request):
             phone_number=request.POST.get('phone_number'),
             notes=request.POST.get('notes', '')
         )
+
+        # If user selected card and provided card details, perform a mock payment
+        if payment_method == 'card' and request.POST.get('card_number'):
+            raw = request.POST.get('card_number', '').replace(' ', '')
+            last4 = raw[-4:] if len(raw) >= 4 else raw
+            order.is_paid = True
+            extra_note = f"\nPayment: Card ending ****{last4} (mock)."
+            order.notes = (order.notes or '') + extra_note
+            order.save()
+            logger.info(f"Mock card payment applied for order {order.order_number} (****{last4})")
 
         for cart_item in cart.items.all():
             OrderItem.objects.create(
