@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Category(models.Model):
+class Category(models.Model): #232
     name = models.CharField(
         max_length=200,
         unique=True
