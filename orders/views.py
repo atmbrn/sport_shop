@@ -8,6 +8,7 @@ from products.models import Product
 from .models import Cart, CartItem, Order, OrderItem
 import logging
 from datetime import datetime
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +116,6 @@ def checkout(request):
             notes=request.POST.get('notes', '')
         )
 
-        # If user selected card and provided card details, perform a mock payment
         if payment_method == 'card' and request.POST.get('card_number'):
             raw = request.POST.get('card_number', '').replace(' ', '')
             last4 = raw[-4:] if len(raw) >= 4 else raw
@@ -172,3 +172,59 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['items'] = self.get_object().items.all()
         return context
+
+
+@login_required(login_url='users:login')
+def pay_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.is_paid:
+        messages.info(request, "Order is already paid.")
+        return redirect('orders:order_detail', order_id=order.id)
+
+    if request.method == 'POST':
+        payment_method = request.POST.get('payment_method', 'card')
+
+        # Card processing (mock)
+        if payment_method == 'card' and request.POST.get('card_number'):
+            raw = request.POST.get('card_number', '').replace(' ', '')
+            last4 = raw[-4:] if len(raw) >= 4 else raw
+            order.is_paid = True
+            extra_note = f"\nPayment: Card ending ****{last4} (mock)."
+            order.notes = (order.notes or '') + extra_note
+            order.payment_method = payment_method
+            order.save()
+            logger.info(f"Mock card payment applied for order {order.order_number} (****{last4})")
+            messages.success(request, "Payment successful!")
+            return redirect('orders:order_detail', order_id=order.id)
+
+        # PayPal - redirect to a simple mock PayPal flow
+        if payment_method == 'paypal':
+            return redirect('orders:paypal_checkout', order_id=order.id)
+
+        messages.error(request, "Please provide payment details.")
+        return redirect('orders:pay_order', order_id=order.id)
+
+    return render(request, 'orders/pay_order.html', {'order': order})
+
+
+@login_required(login_url='users:login')
+def paypal_checkout(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.is_paid:
+        messages.info(request, "Order is already paid.")
+        return redirect('orders:order_detail', order_id=order.id)
+
+    if request.method == 'POST':
+        # Simulate PayPal completing payment
+        order.is_paid = True
+        order.payment_method = 'paypal'
+        extra_note = f"\nPayment: PayPal (mock) on {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC."
+        order.notes = (order.notes or '') + extra_note
+        order.save()
+        logger.info(f"Mock PayPal payment applied for order {order.order_number}")
+        messages.success(request, "PayPal payment successful!")
+        return redirect('orders:order_detail', order_id=order.id)
+
+    return render(request, 'orders/paypal_checkout.html', {'order': order})

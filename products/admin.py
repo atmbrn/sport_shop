@@ -9,6 +9,8 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
     fields = ('image', 'alt_text', 'is_primary')
+    can_delete = True
+    show_change_link = True
 
 
 class CategoryAdmin(admin.ModelAdmin):
