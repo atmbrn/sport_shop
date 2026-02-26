@@ -102,7 +102,7 @@
                                     {{ product.name }}
                                 </a>
                             </h5>
-                            <p class="text-white small">{% for cat in product.categories.all %}{{ cat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                            <p class="text-white small">{% for category in product.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 
                             <div class="mb-2">
                                 {% if product.discount_price %}

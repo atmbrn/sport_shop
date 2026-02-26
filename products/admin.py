@@ -34,7 +34,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'get_categories',
+        'get_category',
         'price',
         'discount_price',
         'stock',
@@ -58,9 +58,8 @@ class ProductAdmin(admin.ModelAdmin):
     )
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]
-    filter_horizontal = ('categories',)
     fieldsets = (
-        ('Product Info', {'fields': ('name', 'slug', 'categories')}),
+        ('Product Info', {'fields': ('name', 'slug', 'category')}),
         ('Description', {'fields': ('description',)}),
         ('Pricing', {'fields': ('price', 'discount_price')}),
         ('Stock & Availability', {'fields': ('stock', 'is_active')}),
@@ -73,8 +72,12 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at', 'views_count')
 
     def get_categories(self, obj):
-        return ', '.join([c.name for c in obj.categories.all()])
+        return ', '.join([cat.name for cat in obj.categories.all()]) if obj.categories.exists() else ''
     get_categories.short_description = 'Categories'
+    # keep compatibility name
+    def get_category(self, obj):
+        return ', '.join([cat.name for cat in obj.categories.all()]) if obj.categories.exists() else ''
+    get_category.short_description = 'Categories'
 
 
 class ProductImageAdmin(admin.ModelAdmin):

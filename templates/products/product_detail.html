@@ -38,8 +38,8 @@
             <h1 class="text-white">{{ product.name }}</h1>
 
             <div class="mb-3">
-                {% for cat in product.categories.all %}
-                <span class="badge bg-secondary">{{ cat.name }}</span>
+                {% for category in product.categories.all %}
+                <span class="badge bg-secondary">{{ category.name }}</span>
                 {% endfor %}
                 {% if product.brand %}
                 <span class="badge bg-info">{{ product.brand }}</span>

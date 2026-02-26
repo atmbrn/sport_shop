@@ -27,7 +27,7 @@ class ProductListView(ListView):
 
         category = self.request.GET.get('category')
         if category:
-            queryset = queryset.filter(categories__slug=category)
+            queryset = queryset.filter(category__slug=category)
 
         sort = self.request.GET.get('sort', '-created_at')
         if sort in ['price', '-price', 'name', '-name', 'views_count', '-views_count']:
@@ -89,7 +89,7 @@ class ProductDetailView(DetailView):
         context['related_products'] = Product.objects.filter(
             categories__in=product.categories.all(),
             is_active=True
-        ).exclude(id=product.id).distinct()[:5]
+        ).exclude(id=product.id)[:5]
 
         logger.info(f"Product viewed: {product.name} by {self.request.user or 'Anonymous'}")
 
