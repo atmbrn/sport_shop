@@ -27,7 +27,7 @@ class ProductListView(ListView):
 
         category = self.request.GET.get('category')
         if category:
-            queryset = queryset.filter(category__slug=category)
+            queryset = queryset.filter(categories__slug=category)
 
         sort = self.request.GET.get('sort', '-created_at')
         if sort in ['price', '-price', 'name', '-name', 'views_count', '-views_count']:

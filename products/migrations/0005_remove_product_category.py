@@ -6,12 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0004_merge_0003_add_category_fk_0003_create_m2m_table'),
+        ('products', '0003_create_m2m_table'),
     ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='product',
-            name='category',
-        ),
-    ]
+    operations = []
